@@ -19,6 +19,7 @@ void main() async {
 
 DatabaseReference usersRef = FirebaseDatabase.instance.ref("users");
 DatabaseReference driversRef = FirebaseDatabase.instance.ref("drivers");
+DatabaseReference helpRef = FirebaseDatabase.instance.ref("help");
 DatabaseReference newRequestsRef =
     FirebaseDatabase.instance.ref("Ride Requests");
 DatabaseReference rideRequestRef = FirebaseDatabase.instance

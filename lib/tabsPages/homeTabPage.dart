@@ -6,7 +6,7 @@ import 'package:driver_app/Notifications/pushNotificationService.dart';
 import 'package:driver_app/configMaps.dart';
 import 'package:driver_app/main.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_geofire/flutter_geofire.dart';
 import 'package:geolocator/geolocator.dart';
@@ -37,23 +37,28 @@ class _HomeTabPageState extends State<HomeTabPage> {
 
   bool isDriverAvailable = false;
 
+  String? _token;
+  late Stream<String> _tokenStream;
+
+  void setToken(String? token) {
+    print('FCM Token: $token');
+    setState(() {
+      _token = token;
+      driversRef.child(currentfirebaseUser.uid).child("token").set(token);
+    });
+  }
+
   @override
   void initState() {
     super.initState();
 
-    FirebaseDatabase.instance.ref("help").onValue.map((event) => () {
-          for (var sn in event.snapshot.children) {
-            displayToastMessage("help", context);
-
-            NearbyAvailableOrder newOrder = NearbyAvailableOrder();
-            newOrder.id = sn.child("id").value.toString();
-            newOrder.komposisi = sn.child("komposisi").value.toString();
-            newOrder.user = sn.child("user").value.toString();
-            newOrder.latitude = double.parse(sn.child("latitude").value.toString());
-            newOrder.longitude = double.parse(sn.child("longitude").value.toString());
-            GeoFireAssistant.nearByAvailableOrderList.add(newOrder);
-          }
-        });
+    FirebaseMessaging.instance
+        .getToken(
+            vapidKey:
+                'BGpdLRsMJKvFDD9odfPk92uBg-JbQbyoiZdah0XlUyrjG4SDgUsE1iC_kdRgt4Kn0CO7K3RTswPZt61NNuO0XoA')
+        .then(setToken);
+    _tokenStream = FirebaseMessaging.instance.onTokenRefresh;
+    _tokenStream.listen(setToken);
 
     getCurrentDriverInfo();
   }
@@ -72,6 +77,20 @@ class _HomeTabPageState extends State<HomeTabPage> {
   }
 
   void getCurrentDriverInfo() async {
+    helpRef.onValue.listen((event) {
+      displayToastMessage("Seraching ...", context);
+      for (var sn in event.snapshot.children) {
+        NearbyAvailableOrder newOrder = NearbyAvailableOrder();
+        newOrder.id = sn.child("id").value.toString();
+        newOrder.komposisi = sn.child("komposisi").value.toString();
+        newOrder.user = sn.child("user").value.toString();
+        newOrder.latitude = double.parse(sn.child("latitude").value.toString());
+        newOrder.longitude =
+            double.parse(sn.child("longitude").value.toString());
+        GeoFireAssistant.nearByAvailableOrderList.add(newOrder);
+      }
+    });
+
     currentfirebaseUser = (FirebaseAuth.instance.currentUser)!;
 
     driversRef.child(currentfirebaseUser.uid).once().then((event) {
@@ -94,10 +113,15 @@ class _HomeTabPageState extends State<HomeTabPage> {
 
     PushNotificationService pushNotificationService = PushNotificationService();
 
-    // pushNotificationService.initialize(context);
-    // pushNotificationService.getToken();
+    pushNotificationService.initialize(context);
+    await FirebaseMessaging.instance.subscribeToTopic('alldrivers');
+    await FirebaseMessaging.instance.subscribeToTopic('allusers');
 
     AssistantMethods.retrieveHistoryInfo(context);
+
+    setState(() {
+      updateAvailableDriversOnMap();
+    });
   }
 
   @override
