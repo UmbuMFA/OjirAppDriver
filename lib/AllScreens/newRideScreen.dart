@@ -18,7 +18,7 @@ class NewRideScreen extends StatefulWidget {
   NewRideScreen({required this.rideDetails});
 
   static final CameraPosition _kGooglePlex = CameraPosition(
-    target: LatLng(37.42796133580664, -122.085749655962),
+    target: LatLng(-7.9429193, 112.6135613),
     zoom: 14.4746,
   );
 
