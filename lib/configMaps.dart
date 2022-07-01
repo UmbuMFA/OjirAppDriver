@@ -6,7 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:driver_app/Models/allUsers.dart';
 import 'package:geolocator/geolocator.dart';
 
-String mapKey = "AIzaSyDSYLMonOTm99fFiilHVj54qXeQy9pL5D8";
+String mapKey = "AIzaSyC2QsXxtU_FWRn0qAUzTquUsjvkN8NB1kQ";
 
 late User firebaseUser;
 

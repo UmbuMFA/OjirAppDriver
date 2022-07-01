@@ -36,7 +36,7 @@ class _NewRideScreenState extends State<NewRideScreen> {
   PolylinePoints polylinePoints = PolylinePoints();
   double mapPaddingFromBottom = 0;
   var geoLocator = Geolocator();
-  late BitmapDescriptor animatingMarkerIcon;
+  BitmapDescriptor? animatingMarkerIcon = null;
   late Position myPostion;
   String status = "accepted";
   String durationRide = "";
@@ -80,7 +80,7 @@ class _NewRideScreenState extends State<NewRideScreen> {
       Marker animatingMarker = Marker(
         markerId: MarkerId("animating"),
         position: mPostion,
-        icon: animatingMarkerIcon,
+        icon: animatingMarkerIcon!,
         rotation: rot * 1.0,
         infoWindow: InfoWindow(title: "Current Location"),
       );
@@ -228,7 +228,7 @@ class _NewRideScreenState extends State<NewRideScreen> {
                         Expanded(
                           child: Container(
                             child: Text(
-                              widget.rideDetails.dropoff_address!,
+                              widget.rideDetails.pickup_address!,
                               style: TextStyle(fontSize: 18.0),
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -269,7 +269,7 @@ class _NewRideScreenState extends State<NewRideScreen> {
                             );
 
                             await getPlaceDirection(widget.rideDetails.pickup!,
-                                widget.rideDetails.dropoff!);
+                                widget.rideDetails.pickup!);
 
                             Navigator.pop(context);
                           } else if (status == "arrived") {

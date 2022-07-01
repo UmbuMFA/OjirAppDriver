@@ -83,7 +83,7 @@ class NotificationDialog extends StatelessWidget {
                       Expanded(
                           child: Container(
                               child: Text(
-                        rideDetails.dropoff_address!,
+                        rideDetails.pickup_address!,
                         style: TextStyle(fontSize: 18.0),
                       ))),
                     ],
