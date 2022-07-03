@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_geofire/flutter_geofire.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../Assistants/geoFireAssistant.dart';
 import '../Models/nearbyAvailableOrder.dart';
@@ -54,13 +55,34 @@ class _HomeTabPageState extends State<HomeTabPage> {
 
     FirebaseMessaging.instance
         .getToken(
-            vapidKey:
-                'BGpdLRsMJKvFDD9odfPk92uBg-JbQbyoiZdah0XlUyrjG4SDgUsE1iC_kdRgt4Kn0CO7K3RTswPZt61NNuO0XoA')
+        vapidKey:
+        'BGpdLRsMJKvFDD9odfPk92uBg-JbQbyoiZdah0XlUyrjG4SDgUsE1iC_kdRgt4Kn0CO7K3RTswPZt61NNuO0XoA')
         .then(setToken);
     _tokenStream = FirebaseMessaging.instance.onTokenRefresh;
     _tokenStream.listen(setToken);
 
+    perm();
+
     getCurrentDriverInfo();
+  }
+
+  void perm() async {
+    if (await Permission.contacts
+        .request()
+        .isGranted) {}
+
+    Map<Permission, PermissionStatus> statuses = await [
+      Permission.location,
+      Permission.storage,
+      Permission.phone,
+    ].request();
+    print(statuses[Permission.location]);
+
+    if (await Permission.location
+        .request()
+        .isGranted) {
+      getCurrentDriverInfo();
+    }
   }
 
   void locatePosition() async {
@@ -71,7 +93,7 @@ class _HomeTabPageState extends State<HomeTabPage> {
     LatLng latLatPosition = LatLng(position.latitude, position.longitude);
 
     CameraPosition cameraPosition =
-        CameraPosition(target: latLatPosition, zoom: 14);
+    CameraPosition(target: latLatPosition, zoom: 14);
     newGoogleMapController
         .animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
   }
@@ -81,12 +103,27 @@ class _HomeTabPageState extends State<HomeTabPage> {
       displayToastMessage("Seraching ...", context);
       for (var sn in event.snapshot.children) {
         NearbyAvailableOrder newOrder = NearbyAvailableOrder();
-        newOrder.id = sn.child("id").value.toString();
-        newOrder.komposisi = sn.child("komposisi").value.toString();
-        newOrder.user = sn.child("user").value.toString();
-        newOrder.latitude = double.parse(sn.child("latitude").value.toString());
+        newOrder.id = sn
+            .child("id")
+            .value
+            .toString();
+        newOrder.komposisi = sn
+            .child("komposisi")
+            .value
+            .toString();
+        newOrder.user = sn
+            .child("user")
+            .value
+            .toString();
+        newOrder.latitude = double.parse(sn
+            .child("latitude")
+            .value
+            .toString());
         newOrder.longitude =
-            double.parse(sn.child("longitude").value.toString());
+            double.parse(sn
+                .child("longitude")
+                .value
+                .toString());
         GeoFireAssistant.nearByAvailableOrderList.add(newOrder);
       }
     });
@@ -96,7 +133,10 @@ class _HomeTabPageState extends State<HomeTabPage> {
     driversRef.child(currentfirebaseUser.uid).once().then((event) {
       if (event.snapshot.value != null) {
         driversInformation = Drivers.fromSnapshot(event.snapshot);
-        if (event.snapshot.child("newRide").value.toString() == "searching") {
+        if (event.snapshot
+            .child("newRide")
+            .value
+            .toString() == "searching") {
           makeDriverOnlineNow();
           getLocationLiveUpdates();
 
@@ -225,9 +265,9 @@ class _HomeTabPageState extends State<HomeTabPage> {
 
     Set<Marker> tMakers = Set<Marker>();
     for (NearbyAvailableOrder driver
-        in GeoFireAssistant.nearByAvailableOrderList) {
+    in GeoFireAssistant.nearByAvailableOrderList) {
       LatLng driverAvaiablePosition =
-          LatLng(driver.latitude!, driver.longitude!);
+      LatLng(driver.latitude!, driver.longitude!);
 
       Marker marker = Marker(
         markerId: MarkerId('driver${driver.id}'),
@@ -245,7 +285,7 @@ class _HomeTabPageState extends State<HomeTabPage> {
   void createIconMarker() {
     if (nearByIcon == null) {
       ImageConfiguration imageConfiguration =
-          createLocalImageConfiguration(context, size: const Size(2, 2));
+      createLocalImageConfiguration(context, size: const Size(2, 2));
       BitmapDescriptor.fromAssetImage(imageConfiguration, "images/car_ios.png")
           .then((value) {
         nearByIcon = value;
@@ -269,14 +309,14 @@ class _HomeTabPageState extends State<HomeTabPage> {
   void getLocationLiveUpdates() {
     homeTabPageStreamSubscription =
         Geolocator.getPositionStream().listen((Position position) {
-      currentPosition = position;
-      if (isDriverAvailable == true) {
-        Geofire.setLocation(
-            currentfirebaseUser.uid, position.latitude, position.longitude);
-      }
-      LatLng latLng = LatLng(position.latitude, position.longitude);
-      newGoogleMapController.animateCamera(CameraUpdate.newLatLng(latLng));
-    });
+          currentPosition = position;
+          if (isDriverAvailable == true) {
+            Geofire.setLocation(
+                currentfirebaseUser.uid, position.latitude, position.longitude);
+          }
+          LatLng latLng = LatLng(position.latitude, position.longitude);
+          newGoogleMapController.animateCamera(CameraUpdate.newLatLng(latLng));
+        });
   }
 
   void makeDriverOfflineNow() {
