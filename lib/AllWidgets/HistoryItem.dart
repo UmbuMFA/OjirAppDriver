@@ -30,7 +30,7 @@ class HistoryItem extends StatelessWidget {
                     Expanded(
                         child: Container(
                             child: Text(
-                      history.pickup!,
+                      history.client!,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(fontSize: 18),
                     ))),
@@ -38,7 +38,7 @@ class HistoryItem extends StatelessWidget {
                       width: 5,
                     ),
                     Text(
-                      '\$${history.fares}',
+                      '${history.berat} kg',
                       style: TextStyle(
                           fontFamily: 'Brand Bold',
                           fontSize: 16,
@@ -50,29 +50,8 @@ class HistoryItem extends StatelessWidget {
               SizedBox(
                 height: 8,
               ),
-              Row(
-                mainAxisSize: MainAxisSize.max,
-                children: <Widget>[
-                  Image.asset(
-                    'images/desticon.png',
-                    height: 16,
-                    width: 16,
-                  ),
-                  SizedBox(
-                    width: 18,
-                  ),
-                  Text(
-                    history.dropOff!,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(fontSize: 18),
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: 15,
-              ),
               Text(
-                AssistantMethods.formatTripDate(history.createdAt!),
+                AssistantMethods.formatTripDate(history.date!),
                 style: TextStyle(color: Colors.grey),
               ),
             ],

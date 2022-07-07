@@ -259,27 +259,27 @@ class _HomeTabPageState extends State<HomeTabPage> {
   Set<Marker> markersSet = {};
 
   void updateAvailableDriversOnMap() {
-    setState(() {
-      markersSet.clear();
-    });
-
-    Set<Marker> tMakers = Set<Marker>();
-    for (NearbyAvailableOrder driver
-    in GeoFireAssistant.nearByAvailableOrderList) {
-      LatLng driverAvaiablePosition =
-      LatLng(driver.latitude!, driver.longitude!);
-
-      Marker marker = Marker(
-        markerId: MarkerId('driver${driver.id}'),
-        position: driverAvaiablePosition,
-        icon: nearByIcon!,
-      );
-
-      tMakers.add(marker);
-    }
-    setState(() {
-      markersSet = tMakers;
-    });
+    // setState(() {
+    //   markersSet.clear();
+    // });
+    //
+    // Set<Marker> tMakers = Set<Marker>();
+    // for (NearbyAvailableOrder driver
+    // in GeoFireAssistant.nearByAvailableOrderList) {
+    //   LatLng driverAvaiablePosition =
+    //   LatLng(driver.latitude!, driver.longitude!);
+    //
+    //   Marker marker = Marker(
+    //     markerId: MarkerId('driver${driver.id}'),
+    //     position: driverAvaiablePosition,
+    //     icon: nearByIcon!,
+    //   );
+    //
+    //   tMakers.add(marker);
+    // }
+    // setState(() {
+    //   markersSet = tMakers;
+    // });
   }
 
   void createIconMarker() {

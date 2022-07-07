@@ -1,11 +1,15 @@
 import 'package:driver_app/AllScreens/historyScreen.dart';
 import 'package:driver_app/DataHandler/appData.dart';
+import 'package:driver_app/Models/history.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class EarningsTabPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    List<History> items =
+        Provider.of<AppData>(context, listen: false).tripHistoryDataList;
+
     return Column(
       children: [
         Container(
@@ -20,7 +24,7 @@ class EarningsTabPage extends StatelessWidget {
                   style: TextStyle(color: Colors.white),
                 ),
                 Text(
-                  Provider.of<AppData>(context, listen: false).earnings,
+                  "${items.isNotEmpty ? items.map((e) => int.parse(e.berat!)).reduce((a, b) => a + b) : 0} kg",
                   style: const TextStyle(
                       color: Colors.white,
                       fontSize: 50,
@@ -53,9 +57,7 @@ class EarningsTabPage extends StatelessWidget {
                 ),
                 Expanded(
                     child: Text(
-                  Provider.of<AppData>(context, listen: false)
-                      .countTrips
-                      .toString(),
+                  items.length.toString(),
                   textAlign: TextAlign.end,
                   style: const TextStyle(fontSize: 18),
                 )),

@@ -265,7 +265,7 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
         displayToastMessage(
             "Congratulations, your account has been created.", context);
 
-        Navigator.pushNamed(context, MainScreen.idScreen);
+        Navigator.pushNamedAndRemoveUntil(context, MainScreen.idScreen, (route) => false);
       });
     } else {
       Navigator.pop(context);

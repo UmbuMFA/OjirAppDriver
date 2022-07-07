@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:driver_app/AllScreens/registerationScreen.dart';
 import 'package:driver_app/Models/history.dart';
 import 'package:driver_app/main.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -85,6 +86,7 @@ class AssistantMethods {
     });
 
     //retrieve and display Trip History
+    obtainTripRequestsHistoryData(context);
     driversRef
         .child(currentfirebaseUser.uid)
         .child("history")
@@ -106,23 +108,33 @@ class AssistantMethods {
         });
         Provider.of<AppData>(context, listen: false)
             .updateTripKeys(tripHistoryKeys);
-        obtainTripRequestsHistoryData(context);
       }
     });
   }
 
   static void obtainTripRequestsHistoryData(context) {
-    var keys = Provider.of<AppData>(context, listen: false).tripHistoryKeys;
-
-    for (String key in keys) {
-      newRequestsRef.child(key).once().then((event) {
-        if (event.snapshot.value != null) {
-          var history = History.fromSnapshot(event.snapshot);
-          Provider.of<AppData>(context, listen: false)
-              .updateTripHistoryData(history);
-        }
-      });
-    }
+    driversRef
+        .child(currentfirebaseUser.uid)
+        .child("order")
+        .once()
+        .then((value) {
+      Provider.of<AppData>(context, listen: false).tripHistoryDataList.clear();
+      for (DataSnapshot snapshot in value.snapshot.children) {
+        Provider.of<AppData>(context, listen: false)
+            .updateTripHistoryData(History.fromSnapshot(snapshot));
+      }
+    });
+    // var keys = Provider.of<AppData>(context, listen: false).tripHistoryKeys;
+    //
+    // for (String key in keys) {
+    //   newRequestsRef.child(key).once().then((event) {
+    //     if (event.snapshot.value != null) {
+    //       var history = History.fromSnapshot(event.snapshot);
+    //       Provider.of<AppData>(context, listen: false)
+    //           .updateTripHistoryData(history);
+    //     }
+    //   });
+    // }
   }
 
   static String formatTripDate(String date) {
