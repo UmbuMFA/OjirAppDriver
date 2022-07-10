@@ -17,6 +17,7 @@ void main() async {
   runApp(MyApp());
 }
 
+DatabaseReference bankSampahRef = FirebaseDatabase.instance.ref("bank_sampahs");
 DatabaseReference usersRef = FirebaseDatabase.instance.ref("users");
 DatabaseReference driversRef = FirebaseDatabase.instance.ref("drivers");
 DatabaseReference helpRef = FirebaseDatabase.instance.ref("help");

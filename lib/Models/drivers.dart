@@ -5,6 +5,7 @@ class Drivers {
   String? phone;
   String? photo;
   String? email;
+  String? bank_sampah;
   String? id;
 
   Drivers({
@@ -12,6 +13,7 @@ class Drivers {
     this.phone,
     this.email,
     this.id,
+    this.bank_sampah,
   });
 
   Drivers.fromSnapshot(DataSnapshot dataSnapshot) {
@@ -20,5 +22,6 @@ class Drivers {
     photo = dataSnapshot.child("photo").value.toString();
     email = dataSnapshot.child("email").value.toString();
     name = dataSnapshot.child("name").value.toString();
+    bank_sampah = dataSnapshot.child("bank_sampah").value.toString();
   }
 }

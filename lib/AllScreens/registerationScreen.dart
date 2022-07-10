@@ -3,6 +3,7 @@ import 'dart:io' as io;
 import 'package:driver_app/AllScreens/mainscreen.dart';
 import 'package:driver_app/configMaps.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -32,6 +33,31 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
   String photoText = "Upload Photo";
+  String chosenBankSampah = '';
+
+  List<DropdownMenuItem<String>> dropdowns = [];
+
+  void getBankSampah() async {
+    bankSampahRef.onValue.listen((event) {
+      for (DataSnapshot snapshot in event.snapshot.children) {
+        dropdowns.add(DropdownMenuItem<String>(
+          value: snapshot.child("id").value.toString(),
+          child: Text(snapshot.child("pemilik").value.toString()),
+        ));
+      }
+      setState(() {
+      });
+    });
+  }
+
+  @override
+  void initState() {
+    getBankSampah();
+    dropdowns.add(const DropdownMenuItem<String>(
+      value: "",
+      child: Text("Pilih Bank Sampah"),
+    ));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -85,6 +111,22 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
                         child: Text(photoText)),
                     const SizedBox(
                       height: 1.0,
+                    ),
+                    DropdownButton<String>(
+                      value: chosenBankSampah,
+                      icon: const Icon(Icons.arrow_downward),
+                      elevation: 16,
+                      style: const TextStyle(color: Colors.black),
+                      underline: Container(
+                        height: 2,
+                        color: Colors.black,
+                      ),
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          chosenBankSampah = newValue!;
+                        });
+                      },
+                      items: dropdowns.toList(),
                     ),
                     TextField(
                       controller: nameTextEditingController,
@@ -183,28 +225,7 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
                           ),
                         ),
                       ),
-                      onPressed: () {
-                        if (nameTextEditingController.text.length < 3) {
-                          displayToastMessage(
-                              "name must be atleast 3 Characters.", context);
-                        } else if (!emailTextEditingController.text
-                            .contains("@")) {
-                          displayToastMessage(
-                              "Email address is not Valid.", context);
-                        } else if (phoneTextEditingController.text.isEmpty) {
-                          displayToastMessage(
-                              "Phone Number is mandatory.", context);
-                        } else if (passwordTextEditingController.text.length <
-                            6) {
-                          displayToastMessage(
-                              "Password must be atleast 6 Characters.",
-                              context);
-                        } else if (file == null) {
-                          displayToastMessage("Please upload photo", context);
-                        } else {
-                          registerNewUser(context);
-                        }
-                      },
+                      onPressed: () {},
                     ),
                   ],
                 ),
@@ -213,6 +234,23 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
                 onPressed: () {
                   Navigator.pushNamedAndRemoveUntil(
                       context, LoginScreen.idScreen, (route) => false);
+                  if (nameTextEditingController.text.length < 3) {
+                    displayToastMessage(
+                        "name must be atleast 3 Characters.", context);
+                  } else if (!emailTextEditingController.text.contains("@")) {
+                    displayToastMessage("Email address is not Valid.", context);
+                  } else if (phoneTextEditingController.text.isEmpty) {
+                    displayToastMessage("Phone Number is mandatory.", context);
+                  } else if (passwordTextEditingController.text.length < 6) {
+                    displayToastMessage(
+                        "Password must be atleast 6 Characters.", context);
+                  } else if (chosenBankSampah.isEmpty) {
+                    displayToastMessage("Bank Sampah is mandatory", context);
+                  } else if (file == null) {
+                    displayToastMessage("Please upload photo", context);
+                  } else {
+                    registerNewUser(context);
+                  }
                 },
                 child: const Text(
                   "Already have an Account? Login Here",
@@ -256,6 +294,7 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
           "email": emailTextEditingController.text.trim(),
           "phone": phoneTextEditingController.text.trim(),
           "photo": photo,
+          "bank_sampah": chosenBankSampah,
         };
 
         driversRef.child(firebaseUser.uid).set(userDataMap);
@@ -265,7 +304,8 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
         displayToastMessage(
             "Congratulations, your account has been created.", context);
 
-        Navigator.pushNamedAndRemoveUntil(context, MainScreen.idScreen, (route) => false);
+        Navigator.pushNamedAndRemoveUntil(
+            context, MainScreen.idScreen, (route) => false);
       });
     } else {
       Navigator.pop(context);

@@ -11,6 +11,7 @@ class _QrcodeTabPageState extends State<QrcodeTabPage> {
   TextEditingController bobotController = TextEditingController();
 
   String id_d = driversInformation.id!;
+  String bank_sampah = driversInformation.bank_sampah!;
   String code = "";
 
   @override
@@ -54,7 +55,7 @@ class _QrcodeTabPageState extends State<QrcodeTabPage> {
                   controller: bobotController,
                   onChanged: (text) {
                     setState(() {
-                      code = "${id_d}_$text";
+                      code = "${id_d}_${bank_sampah}_$text";
                     });
                   },
                   keyboardType: TextInputType.number,
