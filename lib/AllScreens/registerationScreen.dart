@@ -45,8 +45,7 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
           child: Text(snapshot.child("pemilik").value.toString()),
         ));
       }
-      setState(() {
-      });
+      setState(() {});
     });
   }
 
@@ -225,7 +224,31 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
                           ),
                         ),
                       ),
-                      onPressed: () {},
+                      onPressed: () {
+                        if (nameTextEditingController.text.length < 3) {
+                          displayToastMessage(
+                              "name must be atleast 3 Characters.", context);
+                        } else if (!emailTextEditingController.text
+                            .contains("@")) {
+                          displayToastMessage(
+                              "Email address is not Valid.", context);
+                        } else if (phoneTextEditingController.text.isEmpty) {
+                          displayToastMessage(
+                              "Phone Number is mandatory.", context);
+                        } else if (passwordTextEditingController.text.length <
+                            6) {
+                          displayToastMessage(
+                              "Password must be atleast 6 Characters.",
+                              context);
+                        } else if (chosenBankSampah.isEmpty) {
+                          displayToastMessage(
+                              "Bank Sampah is mandatory", context);
+                        } else if (file == null) {
+                          displayToastMessage("Please upload photo", context);
+                        } else {
+                          registerNewUser(context);
+                        }
+                      },
                     ),
                   ],
                 ),
@@ -234,23 +257,6 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
                 onPressed: () {
                   Navigator.pushNamedAndRemoveUntil(
                       context, LoginScreen.idScreen, (route) => false);
-                  if (nameTextEditingController.text.length < 3) {
-                    displayToastMessage(
-                        "name must be atleast 3 Characters.", context);
-                  } else if (!emailTextEditingController.text.contains("@")) {
-                    displayToastMessage("Email address is not Valid.", context);
-                  } else if (phoneTextEditingController.text.isEmpty) {
-                    displayToastMessage("Phone Number is mandatory.", context);
-                  } else if (passwordTextEditingController.text.length < 6) {
-                    displayToastMessage(
-                        "Password must be atleast 6 Characters.", context);
-                  } else if (chosenBankSampah.isEmpty) {
-                    displayToastMessage("Bank Sampah is mandatory", context);
-                  } else if (file == null) {
-                    displayToastMessage("Please upload photo", context);
-                  } else {
-                    registerNewUser(context);
-                  }
                 },
                 child: const Text(
                   "Already have an Account? Login Here",
